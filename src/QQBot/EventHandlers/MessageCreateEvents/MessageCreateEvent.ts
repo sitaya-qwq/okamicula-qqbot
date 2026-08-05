@@ -168,7 +168,8 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
             });
     
             if (res.status !== 200){
-                throw new Error(`Failed to fetch reply message from AI with status code: ${(await res.json() as ErrorResponse).error}`);
+                const errRes: ErrorResponse = await res.json() as ErrorResponse;
+                throw new Error(`Failed to fetch reply message from AI! ${errRes.error.code} | ${errRes.error.message}`,);
             }
             
             const data: ResponseData = await res.json();
