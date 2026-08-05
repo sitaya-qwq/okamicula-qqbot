@@ -7,15 +7,13 @@ let tokenCache: { token: string; expiresAt: number } | null = null;
 
 export async function GetAccessToken(env: Env): Promise<string> {
     try {
-        // 1. 检查缓存
         if (tokenCache && tokenCache.expiresAt > Date.now()) {
             console.log('[GetAccessToken] 使用缓存的 Token');
             return tokenCache.token;
         }
 
-        // 2. 获取新 Token
-        const appId = env.BOT_APPID;      // ✅ 使用 BOT_APPID
-        const appSecret = env.BOT_SECRET; // ✅ 使用 BOT_SECRET
+        const appId = env.BOT_APPID;
+        const appSecret = env.BOT_SECRET;
         const baseUrl = env.QQBOT_TOKEN_URL;
 
         if (!appId || !appSecret) {
@@ -23,7 +21,6 @@ export async function GetAccessToken(env: Env): Promise<string> {
             return '';
         }
 
-        // 官方获取 Access Token 的 API
         const url = `${baseUrl}/app/getAppAccessToken`;
 
         const response = await fetch(url, {
@@ -45,7 +42,6 @@ export async function GetAccessToken(env: Env): Promise<string> {
 
         const data: TokenResponse = await response.json();
 
-        // 3. 更新缓存（提前 5 分钟过期）
         const bufferMs = 5 * 60 * 1000;
         tokenCache = {
             token: data.access_token,

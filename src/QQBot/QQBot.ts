@@ -1,17 +1,9 @@
 // src/QQBot/QQBot.ts
-import { Payload, OperateCode, EventHandler } from './Types/BasicTypes';
-import { HandleValidation } from './EventHandlers/ValidationHandler';
-import { HandleC2CMessage } from './EventHandlers/C2CMessageCreateHandler';
-import { HandleGroupAtMessage } from './EventHandlers/GroupAtMessageCreateHandler';
+import { Payload, OperateCode } from './Types/BasicTypes';
+import { ValidationEvent } from './EventHandlers/ValidationEvent';
+import { EventHandlerFactory } from './EventHandlers/EventFactory';
+import { BaseEvent } from './EventHandlers/Event';
 
-// 事件路由表
-const eventRouter: Record<string, EventHandler<any>> = 
-{
-    // 验证事件（特殊处理）
-    // 其他事件可以后续添加
-    'C2C_MESSAGE_CREATE': HandleC2CMessage,
-    'GROUP_AT_MESSAGE_CREATE': HandleGroupAtMessage
-};
 
 /**
  * 处理 QQ 机器人的回调请求
@@ -26,8 +18,8 @@ export async function HandleQQBotRequest(
 
     // 1. 处理 URL 验证 (op=13)
     if (payload.op === OperateCode.URLValidation) 
-    {
-        return HandleValidation(payload as Payload<{ plain_token: string; event_ts: string }>, env,ctx);
+    {       
+        return new ValidationEvent(payload,env,ctx).Handle();;
     }
 
     // 2. 处理心跳确认 (op=11)
@@ -40,10 +32,16 @@ export async function HandleQQBotRequest(
     // 3. 处理事件分发 (op=0)
     if (payload.op === OperateCode.Dispatch && payload.t) 
     {
-        const handler = eventRouter[payload.t];
-        if (handler) {
-            return handler(payload, env,ctx );
+        const event:BaseEvent = EventHandlerFactory.create(
+            payload,
+            ctx,
+            env
+        );
+
+        if (event) {
+            return await event.Handle();
         }
+        
         console.warn(`[QQBot] 未注册的事件类型: ${payload.t}`);
         return new Response('Event not handled', { status: 200 });
     }

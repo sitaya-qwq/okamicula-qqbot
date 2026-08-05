@@ -16,7 +16,7 @@ export async function HandleRequest(request: Request, env: Env, ctx: ExecutionCo
     {
         if (method === "GET")
         {
-            return new Response("Hello from Okamicula!",{status: 200});
+            return new Response("Okamicula is OK!",{status: 200});
         }
         if (method === "POST")
         {
@@ -86,6 +86,9 @@ export async function HandleRequest(request: Request, env: Env, ctx: ExecutionCo
                 );
             }
         }
+    }
+    else if(path === "/api/ai"){
+        
     }
     return new Response("Nihil Ōkamicula invenit...",{status: 404})
 }
