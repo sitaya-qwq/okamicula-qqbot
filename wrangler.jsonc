@@ -13,6 +13,15 @@
 	"upload_source_maps": true,
 	"compatibility_flags": [
 		"nodejs_compat"
+	],
+	"vars": {
+		"BOT_APPID": "102080855",
+		"QQBOT_URL": "https://api.bot.qq.com/v2",
+		"QQBOT_TOKEN_URL": "https://api.bot.qq.com",
+		"AI_APIURL": "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+	},
+	"kv_namespaces": [
+		{"binding": "QQBOT_CHAT_HISTORY", "id": "554129f6d2b542069cca1857e946153e"}
 	]
 	/**
 	 * Smart Placement
