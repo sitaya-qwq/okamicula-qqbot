@@ -98,9 +98,8 @@ async function ReadMessageHistory(key: string, env: Env): Promise<Message[]> {
     try {
         const data = await env.QQBOT_CHAT_HISTORY.get(key, 'json');
         
-        // 如果没有数据，返回空数组
         if (!data) {
-            return [];
+            return [{role:"system",content:`${env.AI_SystemPrompt}`}];
         }
         
         // 确保返回的是数组（类型安全）
