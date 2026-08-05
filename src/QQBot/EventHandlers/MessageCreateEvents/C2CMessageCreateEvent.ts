@@ -29,9 +29,11 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
         });
 
         if (res.status !== 200) {
-            console.error("Failed to upload media!");
+            console.error("Failed to upload a media!");
+            throw new Error("Failed to upload a media");
         }
 
+        console.log("Succeed to upload a media");
         const data: UploadMediaResponse = await res.json();
         return data
     }
