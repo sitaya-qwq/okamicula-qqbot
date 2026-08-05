@@ -24,11 +24,8 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
         } 
     }
 
-    protected async PostMessage(openid: string): Promise<void> {
+    protected async PostMessage(openid: string, reply_msg: SendMessageData): Promise<void> {
         try {
-            let replyMsg: SendC2CMessageData = (await this.GetSendMessageData()) as SendC2CMessageData;
-            replyMsg.msg_id = this._data.id;
-
             const url: string = `${this._env.QQBOT_URL}/users/${openid}/messages`;
             const accessToken = await GetAccessToken(this._env);
 
@@ -42,12 +39,12 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
                     'Authorization': `QQBot ${accessToken}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(replyMsg)
+                body: JSON.stringify(reply_msg)
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`[SendC2CMessage] 发送失败: ${response.status}`, errorText, replyMsg);
+                console.error(`[SendC2CMessage] 发送失败: ${response.status}`, errorText, reply_msg);
 
                 if (response.status === 401) {
                     console.warn('[SendC2CMessage] Token 已过期，清除缓存');
@@ -56,14 +53,16 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
                 return;
             }       
             const result = await response.json();
-            console.log(`[SendC2CMessage] 消息发送成功: ${replyMsg.msg_id || 'N/A'}`, result);
+            console.log(`[SendC2CMessage] 消息发送成功: ${reply_msg.msg_id || 'N/A'}`, result);
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
     public async Handle(): Promise<Response> {
-        this._ctx.waitUntil(this.PostMessage((this._data as C2CMessageData).author.user_openid));
+        let replyMsg: SendC2CMessageData = (await this.GetSendMessageData()) as SendC2CMessageData;
+        replyMsg.msg_id = this._data.id;
+        this._ctx.waitUntil(this.PostMessage((this._data as C2CMessageData).author.user_openid,replyMsg));
 
         return new Response('OK', { status: 200 });
     }

@@ -144,7 +144,7 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
         } 
     }
 
-    protected abstract PostMessage(openid: string): Promise<void>;
+    protected abstract PostMessage(openid: string, reply_msg: SendMessageData): Promise<void>;
     
     protected async FetchReply(msg: string, key: string): Promise<string> {
         try {
