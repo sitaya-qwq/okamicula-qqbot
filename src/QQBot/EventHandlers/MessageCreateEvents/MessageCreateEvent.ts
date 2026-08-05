@@ -1,8 +1,12 @@
 import { ReceiveMessageData } from "../../Types/MessageDataTypes/ReceiveMessageData/ReceiveMessageDataType";
 import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendMessageDataType";
+import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
 import { BaseEvent } from "../Event";
 
 export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
+    protected abstract PostMessage(openid: string, reply_msg: SendMessageData): Promise<void>;
+    protected abstract UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse>;
+
     protected async GetSendMessageData(replyMsg: SendMessageData): Promise<SendMessageData> {
         try {
             const cmdline = this._data?.content?.trim();
@@ -14,8 +18,16 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
             
             switch (command) {
                 case "rr":{
-                    replyMsg.msg_type = 0;
-                    replyMsg.content = "qwq";
+                    replyMsg.msg_type = 7;
+                    const res: UploadMediaResponse = await this.UploadMedia({
+                        file_type: 1,
+                        url: "https://www.dmoe.cc/random.php",
+                        srv_send_msg:false
+                    });
+                    if (!replyMsg.media) {
+                        replyMsg.media = {};
+                    }
+                    replyMsg.media.file_info = res.file_info;
                     break;
                 }
                 default:{
@@ -33,6 +45,5 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
         }
     }
 
-    protected abstract PostMessage(openid: string, reply_msg: SendMessageData): Promise<void>;
 
 }

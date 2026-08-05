@@ -1,6 +1,7 @@
 import { GroupMessageData } from "../../Types/MessageDataTypes/ReceiveMessageData/GroupMessageDataType";
 import { SendGroupAtMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendGroupMessageDataType";
 import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendMessageDataType";
+import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
 import { GetAccessToken, ClearTokenCache } from "../../Utils/AccessToken";
 import { MessageCreateEvent } from "./MessageCreateEvent";
 
@@ -8,6 +9,31 @@ import { MessageCreateEvent } from "./MessageCreateEvent";
  * 处理私信消息事件 (C2C_MESSAGE_CREATE)
  */
 export class GroupAtMessageCreateEvent extends MessageCreateEvent {
+    protected async UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse> {
+        const group_openid: string = (this._data as GroupMessageData).group_openid;
+        const url = `${this._env.QQBOT_URL}/groups/${group_openid}/files`;
+        const accessToken = await GetAccessToken(this._env);
+
+        if (!accessToken) {
+            throw new Error("Invalid AccessToken!")
+        }
+
+        const res: Response = await fetch(url,{
+            method:"POST",
+            headers:{
+                "Authorization": `QQBot ${accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (res.status !== 200) {
+            console.error("Failed to upload media!");
+        }
+
+        const data: UploadMediaResponse = await res.json();
+        return data
+    }
 
     protected override async GetSendMessageData(): Promise<SendMessageData> {
         try {
