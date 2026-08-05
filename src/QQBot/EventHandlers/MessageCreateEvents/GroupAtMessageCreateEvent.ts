@@ -15,7 +15,7 @@ export class GroupAtMessageCreateEvent extends MessageCreateEvent {
     
             let replyMsg: SendMessageData = {
                 msg_id: userMsg.id,
-                content: await this.FetchReply(userMsg.content,userMsg.group_openid)
+                content: userMsg.content
             }
             return super.GetSendMessageData(replyMsg);
         }catch(error){

@@ -166,41 +166,5 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
     }
 
     protected abstract PostMessage(openid: string, reply_msg: SendMessageData): Promise<void>;
-    
-    protected async FetchReply(msg: string, key: string): Promise<string> {
-        try {
-            const AI_BASE_URL: string = this._env.AI_APIURL;
-            const AI_API_KEY: string = this._env.AI_APIKEY;
-            const MODEL: string = "GLM-4.7-FLASH";
-            const chatHistory: Message[] = await ReadMessageHistory(key,this._env);
-            chatHistory.push({role: "user", content: msg});
-            const res: Response = await fetch(AI_BASE_URL,{
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${AI_API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body:JSON.stringify({
-                    model: MODEL,
-                    temperature: 1.0,
-                    stream: false,
-                    messages: chatHistory
-                })
-            });
-    
-            if (res.status !== 200 ){
-                const errRes: ErrorResponse = await res.json() as ErrorResponse;
-                throw new Error(`Failed to fetch reply message from AI! ${errRes.error.code} | ${errRes.error.message}`,);
-            }
-            
-            const data: ResponseData = await res.json();
-            console.log("[FetchReply] A reply request sent",data.choices[0].message.content);
-            chatHistory.push({role: "assistant", content: data.choices[0].message.content});
-            await UpdateMessageHistory(key,chatHistory,this._env);
-            return data.choices[0].message.content;
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
+
 }

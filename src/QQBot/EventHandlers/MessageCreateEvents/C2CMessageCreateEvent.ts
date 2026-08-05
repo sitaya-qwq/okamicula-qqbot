@@ -15,7 +15,7 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
 
             let replyMsg: SendMessageData = {
                 msg_id: userMsg.id,
-                content: await this.FetchReply(userMsg.content,userMsg.author.id)
+                content: userMsg.content
             }
             return super.GetSendMessageData(replyMsg);
         }catch(error){
