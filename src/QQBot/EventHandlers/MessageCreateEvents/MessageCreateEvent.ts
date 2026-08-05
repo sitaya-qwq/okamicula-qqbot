@@ -88,9 +88,13 @@ interface ContentFilter {
 	level: number
 }
 
-interface Message {
-    role: string;
-    content: string;
+interface Error{
+    code: number;
+    message: string;
+}
+
+interface ErrorResponse{
+    error: Error;
 }
 
 // ============ 读取函数 ============
@@ -164,7 +168,7 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
             });
     
             if (res.status !== 200){
-                throw new Error(`Failed to fetch reply message from AI with status code: ${(await res.json())}`);
+                throw new Error(`Failed to fetch reply message from AI with status code: ${(await res.json() as ErrorResponse).error}`);
             }
             
             const data: ResponseData = await res.json();
