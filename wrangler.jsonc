@@ -17,11 +17,13 @@
 	"vars": {
 		"BOT_APPID": "102080855",
 		"QQBOT_URL": "https://api.bot.qq.com/v2",
-		"QQBOT_TOKEN_URL": "https://api.bot.qq.com"
+		"QQBOT_TOKEN_URL": "https://api.bot.qq.com",
+		"API_IMG": "https://www.dmoe.cc/random.php?return=json"
 	},
 	"kv_namespaces": [
 		{"binding": "QQBOT_CHAT_HISTORY", "id": "554129f6d2b542069cca1857e946153e"}
-	]
+	],
+	"secrets": {"required": ["BOT_SECRET"]}
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

@@ -5,13 +5,11 @@ import { BaseEvent } from "../Event";
 
 interface ImgResponse{
     code: number;
-    imgurl: string; 
-    source: string;
-    id: string;
+    imgurl: string;
 }
 
-async function GetImgResponse(): Promise<ImgResponse> {
-    const url = "https://www.dmoe.cc/random.php?return=json";
+async function GetImgResponse(env: Env): Promise<ImgResponse> {
+    const url = env.API_IMG;
     const res = await fetch(url,{method: "GET"});
     if (res.status != 200) {
         throw new Error(`Failed to fetch images`);
@@ -35,17 +33,17 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
             switch (command) {
                 case "rr":{
                     replyMsg.msg_type = 7;
-                    const imgRes: ImgResponse = await GetImgResponse();
+                    const imgRes: ImgResponse = await GetImgResponse(this._env);
                     const uploadRes: UploadMediaResponse = await this.UploadMedia({
                         file_type: 1,
-                        url: imgRes.source,
+                        url: imgRes.imgurl,
                         srv_send_msg:false
                     });
                     if (!replyMsg.media) {
                         replyMsg.media = {};
                     }
                     replyMsg.media.file_info = uploadRes.file_info;
-                    replyMsg.content = `图片接口地址: ${imgRes.imgurl}\n源图片地址: ${imgRes.source}\n图片ID: ${imgRes.id}`;
+                    replyMsg.content = `图片接口地址: ${this._env.API_IMG}\n源图片地址: ${imgRes.imgurl}`;
                     break;
                 }
                 default:{
