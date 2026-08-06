@@ -40,11 +40,10 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
 
     protected override async GetSendMessageData(): Promise<SendMessageData> {
         try {
-            const userMsg: C2CMessageData = this._data as C2CMessageData;
+            const recvMsg: C2CMessageData = this._data as C2CMessageData;
 
             let replyMsg: SendMessageData = {
-                msg_id: userMsg.id,
-                content: userMsg.content
+                msg_id: recvMsg.id
             }
             return super.GetSendMessageData(replyMsg);
         }catch(error){

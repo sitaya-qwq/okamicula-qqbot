@@ -2,7 +2,7 @@
 import { Payload, OperateCode } from './Types/QQBotTypes/BasicTypes';
 import { ValidationEvent } from './EventHandlers/ValidationEvent';
 import { EventHandlerFactory } from './EventHandlers/EventFactory';
-import { BaseEvent } from './EventHandlers/Event';
+import { BaseEvent } from './EventHandlers/BaseEvent';
 
 
 /**

@@ -40,11 +40,10 @@ export class GroupAtMessageCreateEvent extends MessageCreateEvent {
 
     protected override async GetSendMessageData(): Promise<SendMessageData> {
         try {
-            const userMsg: GroupMessageData = this._data as GroupMessageData;
+            const recvMsg: GroupMessageData = this._data as GroupMessageData;
     
             let replyMsg: SendMessageData = {
-                msg_id: userMsg.id,
-                content: userMsg.content
+                msg_id: recvMsg.id
             }
             return super.GetSendMessageData(replyMsg);
         }catch(error){

@@ -1,6 +1,6 @@
 import nacl from 'tweetnacl';
 import { ValidationData } from '../Types/QQBotTypes/BasicTypes';
-import { BaseEvent } from './Event';
+import { BaseEvent } from './BaseEvent';
 
 export class ValidationEvent extends BaseEvent<ValidationData> {
     public async Handle(): Promise<Response> {
