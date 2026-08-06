@@ -3,6 +3,22 @@ import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/Se
 import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
 import { BaseEvent } from "../Event";
 
+interface ImgResponse{
+    code: number;
+    imgurl: string; 
+    source: string;
+    id: string;
+}
+
+async function GetImgResponse(): Promise<ImgResponse> {
+    const url = "https://www.dmoe.cc/random.php?return=json";
+    const res = await fetch(url,{method: "GET"});
+    if (res.status != 200) {
+        throw new Error(`Failed to fetch images`);
+    }
+    return (res.json() as Promise<ImgResponse>);
+}
+
 export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
     protected abstract PostMessage(openid: string, reply_msg: SendMessageData): Promise<void>;
     protected abstract UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse>;
@@ -19,15 +35,17 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
             switch (command) {
                 case "rr":{
                     replyMsg.msg_type = 7;
-                    const res: UploadMediaResponse = await this.UploadMedia({
+                    const imgRes: ImgResponse = await GetImgResponse();
+                    const uploadRes: UploadMediaResponse = await this.UploadMedia({
                         file_type: 1,
-                        url: "https://www.dmoe.cc/random.php",
+                        url: imgRes.source,
                         srv_send_msg:false
                     });
                     if (!replyMsg.media) {
                         replyMsg.media = {};
                     }
-                    replyMsg.media.file_info = res.file_info;
+                    replyMsg.media.file_info = uploadRes.file_info;
+                    replyMsg.content = `图片接口地址: ${imgRes.imgurl}\n源图片地址: ${imgRes.source}\n图片ID: ${imgRes.id}`;
                     break;
                 }
                 default:{
