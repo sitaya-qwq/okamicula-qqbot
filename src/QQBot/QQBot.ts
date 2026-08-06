@@ -1,5 +1,5 @@
 // src/QQBot/QQBot.ts
-import { Payload, OperateCode } from './Types/BasicTypes';
+import { Payload, OperateCode } from './Types/QQBotTypes/BasicTypes';
 import { ValidationEvent } from './EventHandlers/ValidationEvent';
 import { EventHandlerFactory } from './EventHandlers/EventFactory';
 import { BaseEvent } from './EventHandlers/Event';

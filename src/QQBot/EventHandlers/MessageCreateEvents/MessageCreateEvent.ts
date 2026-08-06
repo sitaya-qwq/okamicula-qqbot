@@ -1,6 +1,6 @@
-import { ReceiveMessageData } from "../../Types/MessageDataTypes/ReceiveMessageData/ReceiveMessageDataType";
-import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendMessageDataType";
-import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
+import { ReceiveMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/ReceiveMessageDataType";
+import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
+import { UploadMediaRequest, UploadMediaResponse } from "../../Types/QQBotTypes/MessageDataTypes/UploadMediaTypes";
 import { BaseEvent } from "../Event";
 
 interface ImgResponse{
@@ -36,14 +36,14 @@ export abstract class MessageCreateEvent extends BaseEvent<ReceiveMessageData> {
                     const imgRes: ImgResponse = await GetImgResponse(this._env);
                     const uploadRes: UploadMediaResponse = await this.UploadMedia({
                         file_type: 1,
-                        url: imgRes.imgurl,
+                        url: this._env.API_IMG,
                         srv_send_msg:false
                     });
                     if (!replyMsg.media) {
                         replyMsg.media = {};
                     }
                     replyMsg.media.file_info = uploadRes.file_info;
-                    replyMsg.content = `图片接口地址: ${this._env.API_IMG}\n源图片地址: ${imgRes.imgurl}`;
+                    replyMsg.content = "";
                     break;
                 }
                 default:{

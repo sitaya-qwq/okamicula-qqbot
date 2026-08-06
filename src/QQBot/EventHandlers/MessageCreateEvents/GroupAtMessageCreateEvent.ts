@@ -1,7 +1,7 @@
-import { GroupMessageData } from "../../Types/MessageDataTypes/ReceiveMessageData/GroupMessageDataType";
-import { SendGroupAtMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendGroupMessageDataType";
-import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendMessageDataType";
-import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
+import { GroupMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/GroupMessageDataType";
+import { SendGroupAtMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendGroupMessageDataType";
+import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
+import { UploadMediaRequest, UploadMediaResponse } from "../../Types/QQBotTypes/MessageDataTypes/UploadMediaTypes";
 import { GetAccessToken, ClearTokenCache } from "../../Utils/AccessToken";
 import { MessageCreateEvent } from "./MessageCreateEvent";
 

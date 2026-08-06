@@ -1,4 +1,4 @@
-import { Payload } from "./QQBot/Types/BasicTypes";
+import { Payload } from "./QQBot/Types/QQBotTypes/BasicTypes";
 import { HandleQQBotRequest } from "./QQBot/QQBot";
 
 export async function HandleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response>

@@ -18,7 +18,7 @@
 		"BOT_APPID": "102080855",
 		"QQBOT_URL": "https://api.bot.qq.com/v2",
 		"QQBOT_TOKEN_URL": "https://api.bot.qq.com",
-		"API_IMG": "https://www.dmoe.cc/random.php?return=json"
+		"API_IMG": "https://www.dmoe.cc/random.php"
 	},
 	"kv_namespaces": [
 		{"binding": "QQBOT_CHAT_HISTORY", "id": "554129f6d2b542069cca1857e946153e"}

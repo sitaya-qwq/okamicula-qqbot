@@ -1,8 +1,7 @@
-import { error } from "node:console";
-import { C2CMessageData } from "../../Types/MessageDataTypes/ReceiveMessageData/C2CMessageDataType";
-import { SendC2CMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendC2CMessageDataType";
-import { SendMessageData } from "../../Types/MessageDataTypes/SendMessageData/SendMessageDataType";
-import { UploadMediaRequest, UploadMediaResponse } from "../../Types/MessageDataTypes/UploadMediaTypes";
+import { C2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/C2CMessageDataType";
+import { SendC2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendC2CMessageDataType";
+import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
+import { UploadMediaRequest, UploadMediaResponse } from "../../Types/QQBotTypes/MessageDataTypes/UploadMediaTypes";
 import { GetAccessToken, ClearTokenCache } from "../../Utils/AccessToken";
 import { MessageCreateEvent } from "./MessageCreateEvent";
 

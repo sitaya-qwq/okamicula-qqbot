@@ -1,5 +1,5 @@
 import nacl from 'tweetnacl';
-import { ValidationData } from '../Types/BasicTypes';
+import { ValidationData } from '../Types/QQBotTypes/BasicTypes';
 import { BaseEvent } from './Event';
 
 export class ValidationEvent extends BaseEvent<ValidationData> {

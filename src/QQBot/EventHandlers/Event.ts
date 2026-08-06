@@ -1,4 +1,4 @@
-import { Payload } from "../Types/BasicTypes";
+import { Payload } from "../Types/QQBotTypes/BasicTypes";
 
 export abstract class BaseEvent<T = any> {
     protected readonly _payload: Payload;
