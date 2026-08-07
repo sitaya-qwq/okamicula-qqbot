@@ -24,11 +24,3 @@ export interface ValidationData
     plain_token: string;
     event_ts: string;
 }
-
-export type EventHandler<T = unknown> = 
-(
-    payload: Payload<T>,
-    env: Env,
-    ctx: ExecutionContext
-) => Promise<Response>;
-

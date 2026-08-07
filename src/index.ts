@@ -14,6 +14,6 @@ import { HandleRequest } from "./Requests";
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return HandleRequest(request,env,ctx);
+		return HandleRequest(request,ctx);
 	},
 } satisfies ExportedHandler<Env>;

@@ -11,8 +11,8 @@ import { MessageCreateEvent } from "./MessageCreateEvent";
 export class GroupAtMessageCreateEvent extends MessageCreateEvent {
     protected async UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse> {
         const group_openid: string = (this._data as GroupMessageData).group_openid;
-        const url = `${this._env.QQBOT_URL}/groups/${group_openid}/files`;
-        const accessToken = await GetAccessToken(this._env);
+        const url = `${env.QQBOT_URL}/groups/${group_openid}/files`;
+        const accessToken = await GetAccessToken(env);
 
         if (!accessToken) {
             throw new Error("Invalid AccessToken!")
@@ -37,7 +37,6 @@ export class GroupAtMessageCreateEvent extends MessageCreateEvent {
         const data: UploadMediaResponse = await res.json();
         return data
     }
-
     protected override async GetSendMessageData(): Promise<SendMessageData> {
         try {
             const recvMsg: GroupMessageData = this._data as GroupMessageData;
@@ -51,12 +50,10 @@ export class GroupAtMessageCreateEvent extends MessageCreateEvent {
             throw error;
         } 
     }
-
-
     protected async PostMessage(openid: string, reply_msg: SendMessageData): Promise<void> {
         try {
-            const url: string = `${this._env.QQBOT_URL}/groups/${openid}/messages`;
-            const accessToken = await GetAccessToken(this._env);
+            const url: string = `${env.QQBOT_URL}/groups/${openid}/messages`;
+            const accessToken = await GetAccessToken(env);
 
             if (!accessToken) {
                 throw new Error("Invalid AccessToken!")

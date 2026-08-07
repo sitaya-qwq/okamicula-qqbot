@@ -1,3 +1,5 @@
+import { env } from "cloudflare:workers";
+
 interface TokenResponse {
     access_token: string;
     expires_in: number;
@@ -5,7 +7,7 @@ interface TokenResponse {
 
 let tokenCache: { token: string; expiresAt: number } | null = null;
 
-export async function GetAccessToken(env: Env): Promise<string> {
+export async function GetAccessToken(): Promise<string> {
     try {
         if (tokenCache && tokenCache.expiresAt > Date.now()) {
             console.log('[GetAccessToken] 使用缓存的 Token');

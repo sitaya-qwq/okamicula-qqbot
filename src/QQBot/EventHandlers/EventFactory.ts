@@ -6,12 +6,12 @@ import { GroupAtMessageCreateEvent } from './MessageCreateEvents/GroupAtMessageC
 // ... 其他 Handler
 
 export class EventHandlerFactory {
-    static create(payload: Payload, ctx: ExecutionContext, env: any) {
+    static create(payload: Payload, ctx: ExecutionContext) {
         switch (payload.t) {
             case "C2C_MESSAGE_CREATE":
-                return new C2CMessageCreateEvent(payload,env,ctx);
+                return new C2CMessageCreateEvent(payload, ctx);
             case "GROUP_AT_MESSAGE_CREATE":
-                return new GroupAtMessageCreateEvent(payload, env, ctx);
+                return new GroupAtMessageCreateEvent(payload, ctx);
             default:
                 throw new Error(`Unsupported event type: ${payload.t}`);
         }

@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { C2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/C2CMessageDataType";
 import { SendC2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendC2CMessageDataType";
 import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
@@ -11,8 +12,8 @@ import { MessageCreateEvent } from "./MessageCreateEvent";
 export class C2CMessageCreateEvent extends MessageCreateEvent {
     protected async UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse> {
         const user_openid: string = (this._data as C2CMessageData).author.id;
-        const url = `${this._env.QQBOT_URL}/users/${user_openid}/files`;
-        const accessToken = await GetAccessToken(this._env);
+        const url = `${env.QQBOT_URL}/users/${user_openid}/files`;
+        const accessToken = await GetAccessToken();
 
         if (!accessToken) {
             throw new Error("Invalid AccessToken!")
@@ -54,8 +55,8 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
 
     protected async PostMessage(openid: string, reply_msg: SendMessageData): Promise<void> {
         try {
-            const url: string = `${this._env.QQBOT_URL}/users/${openid}/messages`;
-            const accessToken = await GetAccessToken(this._env);
+            const url: string = `${env.QQBOT_URL}/users/${openid}/messages`;
+            const accessToken = await GetAccessToken();
 
             if (!accessToken) {
                 throw new Error("Invalid AccessToken!")
