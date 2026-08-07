@@ -21,7 +21,7 @@ export class HelpCommand extends BaseCommand {
         else {
             let msg: string = "List of all commands:\n"
             for (const [label,cmd] of commandMap) {
-                msg += `/\t${label} - ${cmd.GetIntro()} \n`;
+                msg += `\t/${label} - ${cmd.GetIntro()} \n`;
             }
             msg += "Here are all of the commands...";
 
