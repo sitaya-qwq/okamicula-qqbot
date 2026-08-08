@@ -1,48 +1,30 @@
-import { GroupMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/GroupMessageDataType";
-import { SendGroupAtMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendGroupMessageDataType";
-import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
-import { UploadMediaRequest, UploadMediaResponse } from "../../Types/QQBotTypes/MessageDataTypes/UploadMediaTypes";
-import { GetAccessToken, ClearTokenCache } from "../../Utils/AccessToken";
+import { qqbotAPIClient } from "../../..";
+import { GroupMessageData } from "../../../Types/QQBot/MessageData/ReceiveMessageData/GroupMessageData";
+import { SendGroupMessageRequest } from "../../../Types/QQBot/MessageData/SendMessageData/SendGroupMessageRequest";
+import { SendMessageRequest } from "../../../Types/QQBot/MessageData/SendMessageData/SendMessageRequest";
+import { UploadMediaRequest } from "../../../Types/QQBot/UploadMedia/UploadMediaRequest";
+import { UploadMediaResponse } from "../../../Types/QQBot/UploadMedia/UploadMediaResponse";
 import { MessageCreateEvent } from "./MessageCreateEvent";
 
 /**
  * 处理私信消息事件 (C2C_MESSAGE_CREATE)
  */
 export class GroupAtMessageCreateEvent extends MessageCreateEvent {
-    protected async UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse> {
-        const group_openid: string = (this._data as GroupMessageData).group_openid;
-        const url = `${this._env.QQBOT_URL}/groups/${group_openid}/files`;
-        const accessToken = await GetAccessToken(this._env);
-
-        if (!accessToken) {
-            throw new Error("Invalid AccessToken!")
+    protected async UploadMedia(file_info: UploadMediaRequest): Promise<UploadMediaResponse> {
+        try {
+            const recvMsg: GroupMessageData = this.data_ as GroupMessageData;
+            return await qqbotAPIClient.UploadGroupMedia(recvMsg.group_openid,file_info);
+        } catch (error) {
+            console.error(error);
+            throw error;
         }
-
-        const res: Response = await fetch(url,{
-            method:"POST",
-            headers:{
-                "Authorization": `QQBot ${accessToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (res.status !== 200) {
-            console.error("Failed to upload a media!");
-            throw new Error("Failed to upload a media");
-        }
-
-        console.log("Succeed to upload a media");
-
-        const data: UploadMediaResponse = await res.json();
-        return data
     }
 
-    protected override async GetSendMessageData(): Promise<SendMessageData> {
+    protected override async GetSendMessageData(): Promise<SendMessageRequest> {
         try {
-            const recvMsg: GroupMessageData = this._data as GroupMessageData;
+            const recvMsg: GroupMessageData = this.data_ as GroupMessageData;
     
-            let replyMsg: SendMessageData = {
+            let replyMsg: SendMessageRequest = {
                 msg_id: recvMsg.id
             }
             return super.GetSendMessageData(replyMsg);
@@ -53,46 +35,19 @@ export class GroupAtMessageCreateEvent extends MessageCreateEvent {
     }
 
 
-    protected async PostMessage(openid: string, reply_msg: SendMessageData): Promise<void> {
+    protected async PostMessage(openid: string, reply_msg: SendMessageRequest): Promise<void> {
         try {
-            const url: string = `${this._env.QQBOT_URL}/groups/${openid}/messages`;
-            const accessToken = await GetAccessToken(this._env);
-
-            if (!accessToken) {
-                throw new Error("Invalid AccessToken!")
-            }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `QQBot ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reply_msg)
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`[SendGroupAtMessage] 发送失败: ${response.status}`, errorText, reply_msg);
-
-                if (response.status === 401) {
-                    console.warn('[SendGroupAtMessage] Token 已过期，清除缓存');
-                    ClearTokenCache();
-                }
-                return;
-            }       
-            const result = await response.json();
-            console.log(`[SendGroupAtMessage] 消息发送成功: ${reply_msg.msg_id || 'N/A'}`, result);
+            await qqbotAPIClient.SendGroupMessage(openid,reply_msg);
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
     public async Handle(): Promise<Response> {
-        let replyMsg: SendGroupAtMessageData = (await this.GetSendMessageData()) as SendGroupAtMessageData;
-        replyMsg.msg_id = this._data.id;
+        let replyMsg: SendGroupMessageRequest = (await this.GetSendMessageData()) as SendGroupMessageRequest;
+        replyMsg.msg_id = this.data_.id;
 
-        this._ctx.waitUntil(this.PostMessage((this._data as GroupMessageData).group_openid,replyMsg));
+        this.ctx_.waitUntil(this.PostMessage((this.data_ as GroupMessageData).group_openid,replyMsg));
 
         return new Response('OK', { status: 200 });
     }

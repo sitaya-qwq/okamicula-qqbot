@@ -1,15 +1,16 @@
-import { Payload } from "../Types/QQBotTypes/BasicTypes";
+import { Payload } from "../../Types/QQBot/Payload";
 
 export abstract class BaseEvent<T = any> {
-    protected readonly _payload: Payload;
-    protected readonly _env: Env;
-    protected readonly _ctx: ExecutionContext;
-    protected readonly _data: T;
+    protected readonly payload_: Payload;
+    protected readonly env_: Env;
+    protected readonly ctx_: ExecutionContext;
+    protected readonly data_: T;
+
     public constructor(payload: Payload, env: Env, ctx: ExecutionContext) {
-        this._payload = payload;
-        this._env = env;
-        this._ctx = ctx;
-        this._data = payload.d as T;
+        this.payload_ = payload;
+        this.env_ = env;
+        this.ctx_ = ctx;
+        this.data_ = payload.d as T;
     }
 
     

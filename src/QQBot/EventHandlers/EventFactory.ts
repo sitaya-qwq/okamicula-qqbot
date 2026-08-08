@@ -1,5 +1,5 @@
 // handlers/MessageHandlerFactory.ts
-import { Payload } from '../Types/QQBotTypes/BasicTypes';
+import { Payload } from '../../Types/QQBot/Payload';
 import { C2CMessageCreateEvent } from './MessageCreateEvents/C2CMessageCreateEvent';
 import { GroupAtMessageCreateEvent } from './MessageCreateEvents/GroupAtMessageCreateEvent';
 

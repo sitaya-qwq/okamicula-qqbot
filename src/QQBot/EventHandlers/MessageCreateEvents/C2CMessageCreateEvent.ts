@@ -1,48 +1,31 @@
-import { C2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/ReceiveMessageData/C2CMessageDataType";
-import { SendC2CMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendC2CMessageDataType";
-import { SendMessageData } from "../../Types/QQBotTypes/MessageDataTypes/SendMessageData/SendMessageDataType";
-import { UploadMediaRequest, UploadMediaResponse } from "../../Types/QQBotTypes/MessageDataTypes/UploadMediaTypes";
-import { GetAccessToken, ClearTokenCache } from "../../Utils/AccessToken";
+import { qqbotAPIClient } from "../../..";
+import { C2CMessageData } from "../../../Types/QQBot/MessageData/ReceiveMessageData/C2CMessageData";
+import { SendC2CMessageRequest } from "../../../Types/QQBot/MessageData/SendMessageData/SendC2CMessageRequest";
+import { SendMessageRequest } from "../../../Types/QQBot/MessageData/SendMessageData/SendMessageRequest";
+import { UploadMediaRequest } from "../../../Types/QQBot/UploadMedia/UploadMediaRequest";
+import { UploadMediaResponse } from "../../../Types/QQBot/UploadMedia/UploadMediaResponse";
 import { MessageCreateEvent } from "./MessageCreateEvent";
 
 /**
  * 处理私信消息事件 (C2C_MESSAGE_CREATE)
  */
 export class C2CMessageCreateEvent extends MessageCreateEvent {
-    protected async UploadMedia(body: UploadMediaRequest): Promise<UploadMediaResponse> {
-        const user_openid: string = (this._data as C2CMessageData).author.id;
-        const url = `${this._env.QQBOT_URL}/users/${user_openid}/files`;
-        const accessToken = await GetAccessToken(this._env);
-
-        if (!accessToken) {
-            throw new Error("Invalid AccessToken!")
+    protected async UploadMedia(file_info: UploadMediaRequest): Promise<UploadMediaResponse> {
+        try {
+            const recvMsg: C2CMessageData = this.data_ as C2CMessageData;
+            return await qqbotAPIClient.UploadC2CMedia(recvMsg.author.id,file_info);
+        } catch (error) {
+            console.error(error);
+            throw error;
         }
-
-        const res: Response = await fetch(url,{
-            method:"POST",
-            headers:{
-                "Authorization": `QQBot ${accessToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (res.status !== 200) {
-            console.error("Failed to upload a media!");
-            throw new Error("Failed to upload a media");
-        }
-
-        console.log("Succeed to upload a media");
-        const data: UploadMediaResponse = await res.json();
-        return data
     }
 
 
-    protected override async GetSendMessageData(): Promise<SendMessageData> {
+    protected override async GetSendMessageData(): Promise<SendMessageRequest> {
         try {
-            const recvMsg: C2CMessageData = this._data as C2CMessageData;
+            const recvMsg: C2CMessageData = this.data_ as C2CMessageData;
 
-            let replyMsg: SendMessageData = {
+            let replyMsg: SendMessageRequest = {
                 msg_id: recvMsg.id
             }
             return super.GetSendMessageData(replyMsg);
@@ -52,45 +35,19 @@ export class C2CMessageCreateEvent extends MessageCreateEvent {
         } 
     }
 
-    protected async PostMessage(openid: string, reply_msg: SendMessageData): Promise<void> {
+    protected async PostMessage(openid: string, reply_msg: SendMessageRequest): Promise<void> {
         try {
-            const url: string = `${this._env.QQBOT_URL}/users/${openid}/messages`;
-            const accessToken = await GetAccessToken(this._env);
-
-            if (!accessToken) {
-                throw new Error("Invalid AccessToken!")
-            }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `QQBot ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reply_msg)
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`[SendC2CMessage] 发送失败: ${response.status}`, errorText, reply_msg);
-
-                if (response.status === 401) {
-                    console.warn('[SendC2CMessage] Token 已过期，清除缓存');
-                    ClearTokenCache();
-                }
-                return;
-            }       
-            const result = await response.json();
-            console.log(`[SendC2CMessage] 消息发送成功: ${reply_msg.msg_id || 'N/A'}`, result);
+            await qqbotAPIClient.SendC2CMessage(openid,reply_msg);
         } catch (error) {
             console.error(error);
             throw error;
         }
     }
+    
     public async Handle(): Promise<Response> {
-        let replyMsg: SendC2CMessageData = (await this.GetSendMessageData()) as SendC2CMessageData;
-        replyMsg.msg_id = this._data.id;
-        this._ctx.waitUntil(this.PostMessage((this._data as C2CMessageData).author.user_openid,replyMsg));
+        let replyMsg: SendC2CMessageRequest = (await this.GetSendMessageData()) as SendC2CMessageRequest;
+        replyMsg.msg_id = this.data_.id;
+        this.ctx_.waitUntil(this.PostMessage((this.data_ as C2CMessageData).author.user_openid,replyMsg));
 
         return new Response('OK', { status: 200 });
     }

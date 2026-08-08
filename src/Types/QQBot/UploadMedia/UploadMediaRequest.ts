@@ -1,8 +1,3 @@
-export interface UploadMediaResponse{
-    file_info: string;
-    ttl: number;
-}
-
 export interface UploadMediaRequest{
     file_type?: number;
     url?: string;

@@ -11,24 +11,3 @@ export enum OperateCode
     HTTPCallbackACK = 12,    // HTTP 回调回包 (Reply)
     URLValidation = 13,      // 回调地址验证 (Receive)
 }
-export interface Payload<T = unknown>
-{
-    id: string;
-    op: OperateCode;
-    d: T,
-    s?: number;
-    t?: string;
-}
-export interface ValidationData 
-{
-    plain_token: string;
-    event_ts: string;
-}
-
-export type EventHandler<T = unknown> = 
-(
-    payload: Payload<T>,
-    env: Env,
-    ctx: ExecutionContext
-) => Promise<Response>;
-
