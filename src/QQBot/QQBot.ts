@@ -4,6 +4,7 @@ import { EventHandlerFactory } from './EventHandlers/EventFactory';
 import { BaseEvent } from './EventHandlers/BaseEvent';
 import { OperateCode } from '../Types/QQBot/OperateCode';
 import { Payload } from '../Types/QQBot/Payload';
+import { env } from 'cloudflare:workers';
 
 
 /**
@@ -11,7 +12,6 @@ import { Payload } from '../Types/QQBot/Payload';
  */
 export async function HandleQQBotRequest(
     payload: Payload,
-    env: Env,
     ctx: ExecutionContext
 ): Promise<Response> 
 {
@@ -20,7 +20,7 @@ export async function HandleQQBotRequest(
     // 1. 处理 URL 验证 (op=13)
     if (payload.op === OperateCode.URLValidation) 
     {       
-        return new ValidationEvent(payload,env,ctx).Handle();;
+        return new ValidationEvent(payload,ctx).Handle();;
     }
 
     // 2. 处理心跳确认 (op=11)
@@ -35,8 +35,7 @@ export async function HandleQQBotRequest(
     {
         const event:BaseEvent = EventHandlerFactory.create(
             payload,
-            ctx,
-            env
+            ctx
         );
 
         if (event) {

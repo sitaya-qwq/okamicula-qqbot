@@ -1,7 +1,7 @@
-import { Payload } from "./Types/QQBot/BasicTypes";
 import { HandleQQBotRequest } from "./QQBot/QQBot";
+import { Payload } from "./Types/QQBot/Payload";
 
-export async function HandleRequest(request: Request, env: Env, ctx: ExecutionContext): Promise<Response>
+export async function HandleRequest(request: Request, ctx: ExecutionContext): Promise<Response>
 {
     const url: URL = new URL(request.url);
     const method = request.method;
@@ -70,7 +70,7 @@ export async function HandleRequest(request: Request, env: Env, ctx: ExecutionCo
                 }
 
                 // 传递给处理函数
-                return HandleQQBotRequest(payload, env,ctx);
+                return HandleQQBotRequest(payload,ctx);
                 
             } catch (error) {
                 console.error("[Requests] Unhandled error:", error);
@@ -86,9 +86,6 @@ export async function HandleRequest(request: Request, env: Env, ctx: ExecutionCo
                 );
             }
         }
-    }
-    else if(path === "/api/ai"){
-        
     }
     return new Response("Nihil Ōkamicula invenit...",{status: 404})
 }

@@ -1,13 +1,14 @@
 import nacl from 'tweetnacl';
 import { BaseEvent } from './BaseEvent';
 import { ValidationData } from '../../Types/QQBot/ValidationData';
+import { env } from 'cloudflare:workers';
 
 export class ValidationEvent extends BaseEvent<ValidationData> {
     public async Handle(): Promise<Response> {
         try
         {
             const { plain_token, event_ts } = (this.data_ as ValidationData);
-            const botSecret: string = this.env_.BOT_SECRET.trim();
+            const botSecret: string = env.BOT_SECRET.trim();
             
             if (!botSecret) {
                 console.error('BOT_SECRET 未配置');

@@ -27,6 +27,6 @@ export const qqbotAPIClient :QQBotAPIClient = new QQBotAPIClient(env.QQBOT_URL,"
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return HandleRequest(request,env,ctx);
+		return HandleRequest(request,ctx);
 	},
 } satisfies ExportedHandler<Env>;
